@@ -1,20 +1,30 @@
-# BeautifulSoup チートシート
+# BeautifulSoup 日本語チートシート
 
 Python で HTML を扱うためのライブラリ BeautifulSoup （ `beautifulsoup4` ）のチートシートです。
+
+BeautifulSoup について:
 
 - [`beautifulsoup4` · PyPI](https://pypi.org/project/beautifulsoup4/)
 - [Beautiful Soup: We called him Tortoise because he taught us.](https://www.crummy.com/software/BeautifulSoup/)
 
-公式のドキュメントは充実していますが内容が盛りだくさんなので、必要な情報にたどり着くのに時間がかかりがちです。
-BeautifulSoup をときどき使う人（私）が使い方をサッと確認したいときに便利なチートシートです。
+BeautifulSoup の公式ドキュメントは内容が盛りだくさんなので、必要な情報にたどり着くのに時間がかかりがちです。
+これは BeautifulSoup をときどき使う人（私）が使い方をサッと確認したいときに便利なチートシートです。
 
-Python 3 を前提としています。
+## 目次
 
+- 対象バージョン
 - BeautifulSoup をインストールする
 - BeautifulSoup を読み込む
 - ページタイトルなどのメタ情報を取得する
 - 要素を検索する
 - 要素の情報を取得する
+
+## 対象バージョン
+
+動作確認時のバージョンは次のとおりです。
+
+- Python 3.9
+- beautifulsoup4 4.9.3
 
 ## BeautifulSoup をインストールする
 
