@@ -2,10 +2,19 @@
 
 Python で HTML を扱うためのライブラリ BeautifulSoup （ `beautifulsoup4` ）のチートシートです。
 
+- [`beautifulsoup4` · PyPI](https://pypi.org/project/beautifulsoup4/)
+- [Beautiful Soup: We called him Tortoise because he taught us.](https://www.crummy.com/software/BeautifulSoup/)
+
 公式のドキュメントは充実していますが内容が盛りだくさんなので、必要な情報にたどり着くのに時間がかかりがちです。
 BeautifulSoup をときどき使う人（私）が使い方をサッと確認したいときに便利なチートシートです。
 
 Python 3 を前提としています。
+
+- BeautifulSoup をインストールする
+- BeautifulSoup を読み込む
+- ページタイトルなどのメタ情報を取得する
+- 要素を検索する
+- 要素の情報を取得する
 
 ## BeautifulSoup をインストールする
 
@@ -141,8 +150,15 @@ soup.find_all("a")
 soup("a")
 ```
 
-`soup` を直接 callable として実行すると `find_all()` と同じ挙動になります。
+`BeautifulSoup` オブジェクトを直接 callable として実行すると `find_all()` と同じ挙動をします。
 
+特定のタグ（複数）の要素をすべて取得する:
+
+```python
+soup.find_all(["a", "link"])
+# または
+soup(["a", "link"])
+```
 特定のタグの要素を最大 3 件取得する:
 
 キーワード引数 `limit` を使います。
@@ -219,17 +235,29 @@ soup.select("img.attachment")
 soup.select("img[alt]")
 ```
 
-## タグの情報を取得する
+## 要素の情報を取得する
+
+タグ名を取得する:
 
 ```python
 tag.name
+```
 
+属性を取得する:
+
+```python
+# id
 tag["id"]
 # => "id-abc"
 
+# class
 tag["class"]
 # => ["class-a", "class-b"]
 
+# その他属性
+tag["href"]
+
+# すべての属性
 tag.attrs
 # =>
 # {
@@ -237,13 +265,10 @@ tag.attrs
 #   "class": ["styles-module--site-title-link--9ES5k"],
 #   "href": "/",
 # }
-
-tag.text
-# => ' こちら '
 ```
 
 デフォルトでは `class` などの一部の属性は自動的に `list` を返します。
-文字列を返すようにしたい場合は `multi_valued_attributes` で指定します。
+文字列を返すようにしたい場合は `BeautifulSoup` オブジェクトの生成時に `multi_valued_attributes=None` を指定します。
 
 ```python
 soup = BeautifulSoup(html, "html.parser", multi_valued_attributes=None)
@@ -252,3 +277,92 @@ tag = soup.find("a")
 tag["class"]
 # => "class-a class-b"
 ```
+
+内部のテキストを取得する:
+
+```python
+# 内部の要素が 1 件のみの場合
+tag.string
+# => " こちら "
+
+# 内部の要素が複数の場合
+[x for x in tag.strings]
+# => [" こちら ", " あちら "]
+
+# 内部の要素が複数の場合・先頭・末尾のスペースを削除済み
+[x for x in tag.stripped_strings]
+# => ["こちら", "あちら"]
+```
+
+属性を持つかどうかをチェックする:
+
+```python
+tag.has_attr("class")
+```
+
+## 関連要素を取得する
+
+子要素を取得する:
+
+`tag.contents` または `tag.children` を使います。
+`tag.children` はジェネレーターです。
+
+```python
+tag.contents
+# => [...]
+
+[child for child in tag.children]
+# => [...]
+
+tag.contents[0]
+# => ...
+
+tag.children[0]
+# TypeError: 'list_iterator' object is not subscriptable
+```
+
+親要素を取得する:
+
+`tag.parent` または `tag.parents` を使います。
+`tag.parents` はジェネレーターです。
+
+```python
+# 直接の親を取得する
+tag.parent
+
+# すべての親を下から上にさかのぼる
+[x for x in tag.parents]
+
+# 例:
+[x.name for x in soup.title.parents]
+# => ["head", "html", "[document]"]
+
+# 最上位の要素は `BeautifulSoup` オブジェクトそのもの
+type([x for x in soup.title.parents][-1])
+# => <class 'bs4.BeautifulSoup'>
+```
+
+兄弟・姉妹要素を取得する:
+
+`tag.next_sibling` `tag.previous_sibling` `tag.next_siblings` `tag.previous_siblings` を使います。
+
+```python
+# 次の要素を取得する
+tag.next_sibling
+
+# 前の要素を取得する
+tag.previous_sibling
+
+# 後の要素を順に取得する
+[x for x in tag.next_siblings]
+
+# 前の要素を順に（後ろから前に）取得する
+[x for x in tag.previous_siblings]
+```
+
+これらと似て非なる機能を持つものとして次のアトリビュートもあります。
+
+- `tag.next_element`
+- `tag.previous_element`
+- `tag.next_elements`
+- `tag.previous_elements`
