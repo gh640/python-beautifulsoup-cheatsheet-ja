@@ -245,6 +245,12 @@ soup.select("img.attachment")
 soup.select("img[alt]")
 ```
 
+最初にマッチした要素のみを取得したい場合は `soup.select_one()` を使います。
+
+```python
+soup.select_one('script[src^="https://www.googletagmanager.com"]')
+```
+
 ## 要素の情報を取得する
 
 タグ名を取得する:
